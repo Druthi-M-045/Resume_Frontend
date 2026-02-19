@@ -1,20 +1,26 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { login } from '../services/api'
 
-export default function Login(){
-  const [email, setEmail] = useState('')
+export default function Login() {
+  const [email, setEmail] = useState('') // Backend uses 'username', mapping email to username
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const navigate = useNavigate()
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault()
     setError('')
-    if(!email || !password){ setError('Please enter email and password'); return }
-    // fake auth for demo
-    localStorage.setItem('rfd_token', 'demo-token')
-    localStorage.setItem('rfd_user', JSON.stringify({email}))
-    navigate('/')
+    if (!email || !password) { setError('Please enter email and password'); return }
+
+    try {
+      const data = await login(email, password)
+      localStorage.setItem('rfd_token', data.access_token)
+      localStorage.setItem('rfd_user', JSON.stringify({ email, role: data.role }))
+      navigate('/')
+    } catch (err) {
+      setError(err.response?.data?.detail || 'Login failed. Please check your credentials.')
+    }
   }
 
   return (
@@ -26,11 +32,11 @@ export default function Login(){
         <form onSubmit={submit} className="space-y-4">
           <div>
             <label className="block text-sm text-gray-600">Email</label>
-            <input value={email} onChange={e=>setEmail(e.target.value)} className="mt-1 w-full p-2 border rounded-lg" type="email" />
+            <input value={email} onChange={e => setEmail(e.target.value)} className="mt-1 w-full p-2 border rounded-lg" type="email" />
           </div>
           <div>
             <label className="block text-sm text-gray-600">Password</label>
-            <input value={password} onChange={e=>setPassword(e.target.value)} className="mt-1 w-full p-2 border rounded-lg" type="password" />
+            <input value={password} onChange={e => setPassword(e.target.value)} className="mt-1 w-full p-2 border rounded-lg" type="password" />
           </div>
           <button className="w-full bg-gradient-to-r from-primary to-accent text-white py-2 rounded-lg">Login</button>
         </form>
