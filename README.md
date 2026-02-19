@@ -18,6 +18,6 @@ npm run dev
 ```
 
 Notes
-- The frontend expects a backend API at `http://localhost:5000/analyze` (POST multipart/form-data).
+- The frontend expects a backend API at `http://localhost:8000/analyze` (POST multipart/form-data).
 - This scaffold uses Tailwind CSS. Run `npx tailwindcss -i ./src/index.css -o ./dist/output.css --watch` if needed with a custom setup; Vite + Tailwind are already configured in `postcss.config.cjs`.
 # Resume_Frontend
